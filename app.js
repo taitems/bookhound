@@ -14,7 +14,7 @@ var open = require('open');
 var fs = require('fs');
 var moment = require('moment');
 var colors = require('colors');
-var CALLBACK_URL;
+var SITE_URL;
 var ENV = "local";
 var port = process.env.PORT || 3000;
 
@@ -25,8 +25,24 @@ var session = require('express-session');
 var morgan = require('morgan');
 var methodOverride = require('method-override');
 
+// IF 'PROD' IS PASSED IN AS AN ARG SET ENVIRONMENT
+process.argv.forEach(function(val, index, array) {
+  if (val === "prod" || val === "production") {
+    ENV = "prod";
+  }
+});
+
 // CONFIG
-var credentials = require("./credentials.js");
+var config = require("./credentials.js");
+var credentials = {};
+if (ENV === "local") {
+  credentials = require("./credentials.js");
+} else {
+  credentials["trove-secret"] = process.env.TROVE_SECRET;
+  credentials["goodreads-key"] = process.env.GOODREADS_KEY;
+  credentials["goodreads-secret"] = process.env.GOODREADS_SECRET;
+}
+
 var contributorFile = "contributors.json";
 
 var bookTmpl = {
@@ -46,15 +62,8 @@ var bookTmpl = {
 
 var details = [];
 
-// IF 'PROD' IS PASSED IN AS AN ARG SET ENVIRONMENT
-process.argv.forEach(function(val, index, array) {
-  if (val === "prod" || val === "production") {
-    ENV = "prod";
-  }
-});
-
 // SET OAUTH CALLBACK URL
-CALLBACK_URL = credentials[ENV + "-url"];
+SITE_URL = config[ENV + "-url"];
 
 // LOGGER
 var log = (function() {
@@ -98,7 +107,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new GoodreadsStrategy({
     consumerKey: credentials["goodreads-key"],
     consumerSecret: credentials["goodreads-secret"],
-    callbackURL: CALLBACK_URL + "/auth/goodreads/callback"
+    callbackURL: SITE_URL + "/auth/goodreads/callback"
   },
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
@@ -508,5 +517,5 @@ var removeEmptyHoldings = function(theObject) {
 app.listen(port);
 
 if (ENV === "local") {
-  open("http://127.0.0.1:" + port);
+  open(SITE_URL);
 }
