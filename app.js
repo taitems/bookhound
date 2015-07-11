@@ -43,6 +43,11 @@ if (ENV === "local") {
   credentials["goodreads-secret"] = process.env.GOODREADS_SECRET;
 }
 
+console.log(credentials["trove-secret"]);
+console.log(credentials["goodreads-key"]);
+console.log(credentials["goodreads-secret"]);
+
+
 var contributorFile = "contributors.json";
 
 var bookTmpl = {
@@ -131,7 +136,7 @@ var app = express();
 // app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
-  app.use(morgan('combined'));
+  // app.use(morgan('combined'));
   app.use(cookieParser());
   // app.use(bodyParser.urlencoded());
   app.use(bodyParser.json());

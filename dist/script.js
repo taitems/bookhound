@@ -20,13 +20,17 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
     $scope.serverError = false;
     $scope.firstLoad = true;
 
-    $http.get('/fetch/contributors').success(function(data) {
-        $scope.loaded.contributors = true;
-        if (data.response && data.response.contributor) {
-            $scope.contributors = data.response.contributor;
-            $scope.attemptFetch();
-        }
-    });
+
+    if ($scope.user) {
+        $http.get('/fetch/contributors').success(function(data) {
+            $scope.loaded.contributors = true;
+            if (data.response && data.response.contributor) {
+                $scope.contributors = data.response.contributor;
+                $scope.attemptFetch();
+            }
+        });        
+    }
+
 
     $scope.$on('$routeChangeSuccess', function() {
         if ($scope.firstLoad) {
