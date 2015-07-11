@@ -1,0 +1,103 @@
+
+// DIALOG STYLES
+.ngdialog {
+	.ngdialog-content {
+		overflow: hidden;
+		padding: 0 !important;
+		width: 750px !important;
+	}
+	.ngdialog-overlay {
+		background: rgba(0,0,0,0.85);
+	}
+	.image-container {
+		float: left;
+		width: 200px;
+		height: 400px;
+		overflow: hidden;
+		position: relative;
+		background: #555;
+
+		img {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			margin: 90px auto auto auto;
+		}
+		.stretch {
+			-webkit-filter: blur(30px);
+			opacity: .25;
+			transform: scale(5);
+		}
+		.book-cover {
+			z-index: 2;
+		}
+	}
+	.details-container {
+		margin-left: 200px;
+		padding: 0 20px;
+	}
+	.description {
+		height: 210px;
+		overflow: hidden;
+		margin-bottom: 20px;
+		position: relative;
+		font-size: 15px;
+		line-height: 1.7em;
+		color: #666;
+		font-weight: 300;
+
+		&:before {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 50px;
+			background: linear-gradient(180deg, rgba(255,255,255,0),rgba(255,255,255,1));
+		}
+	}
+	h1 {
+		font-size: 24px;
+		padding-right: 40px;
+		line-height: 1.25em;
+	}
+	dl {
+		dt, dd {
+			display: inline-block;
+		}
+		dt {
+			font-weight: 200;
+		}
+		dd {
+			font-weight: 400;
+		}
+	}
+
+	.btn {
+		margin-right: .5em;
+
+		.fa {
+			margin-right: .25em;
+		}
+	}
+
+
+	.ratings {
+		display: block;
+		color: #FFF;
+		text-align: center;
+		margin-top: 260px;
+
+		.value {
+			display: block;
+			font-size: 18px;
+			margin-bottom: 2px;
+		}
+		.off {
+			opacity: 0.3;
+		}
+	}
+
+}

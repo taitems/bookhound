@@ -1,0 +1,11 @@
+.panel {
+	border-radius: 8px;
+	border: 8px solid rgba(0,0,0,0.1);
+	margin-top: -20px;
+	background: transparent;
+
+	.panel-body {
+		border-radius: 8px;
+		background: #FFF;
+	}
+}

@@ -1,0 +1,10 @@
+body {
+	background: $body-bg url(../img/background.jpg) center center no-repeat;
+	background-size: cover;
+}
+html, body, .root {
+	height: 100%;
+}
+.root {
+	position: relative;
+}

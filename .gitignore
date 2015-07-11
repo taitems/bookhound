@@ -1,0 +1,5 @@
+# Ignore Creds
+credentials.js
+
+# The Rest...
+node_modules

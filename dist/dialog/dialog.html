@@ -1,0 +1,24 @@
+<div class="image-container">
+	<img ng-src="{{selectedBook.image}}" class="stretch">
+	<img ng-src="{{selectedBook.image}}" class="book-cover">
+	<span class="ratings">
+		<span class="value">Rated {{selectedBook.rating}}</span>
+		<span ng-bind-html="stars(selectedBook.rating)"></span>
+	</span>
+</div>
+<div class="details-container">
+	<h1>{{selectedBook.title}}</h1>
+	<p>{{selectedBook.rating}} based off {{selectedBook.ratings_count | number}} reviews</p>
+	<!-- <p>{{selectedBook.description}}</p> -->
+	<div class="description" ng-bind-html="trustedDescription()"></div>
+	<p>
+		<a class="btn btn-outline" ng-href="{{selectedBook.troveUrl}}">
+			<span class="fa fa-external-link"></span>
+			Open on Trove
+		</a>
+		<a class="btn btn-outline">
+			<span class="fa fa-external-link"></span>
+			Open on Goodreads
+		</a>
+	</p>
+</div>

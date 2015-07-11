@@ -1,0 +1,76 @@
+.results {
+	min-height: 100%;
+	background: $bg;	
+}
+.item {
+	padding: 30px 20px;
+	height: 180px;
+	cursor: pointer;
+
+	@media (max-width: 421px) {
+		height: auto;
+		padding: 25px 20px;
+	}
+
+	.book {
+		float: left;
+		position: relative;
+
+		.cover {
+			position: absolute;
+			height: 115px;
+			width: 75px;
+			border-radius: 3px;
+			background-position: center center;
+			background-size: cover;
+			background-repeat: no-repeat;
+			z-index: 3;
+
+			img {
+				opacity: 0;
+			}
+		}
+		.backing {
+			position: absolute;
+			background: #717171;
+			height: 115px;
+			width: 75px;
+			z-index: 2;
+		}
+		.pages {
+			position: absolute;
+			background: #FFF url(../img/book.png) center center no-repeat;
+			height: 115px;
+			width: 75px;
+			z-index: 1;
+			box-shadow: 0 6px 13px rgba(0,0,0,0.1),
+						0 2px 4px rgba(0,0,0,0.2),
+						0 1px 3px rgba(0,0,0,0.1);
+		}
+	}
+	.details {
+		margin-left: 100px;
+		color: $text-color;
+
+		h1, h2, p {
+			font-weight: 300;
+		}
+		h1, h2 {
+			margin: .35em 0;
+		}
+		h1 {
+			margin-top: 1em;
+			font-size: 18px;
+			font-weight: 400;
+		}
+		h2 {
+			font-size: 16px;
+		}
+		ul {
+			padding: 0;
+		}
+		ul li {
+			list-style: none;
+		}
+	}
+}

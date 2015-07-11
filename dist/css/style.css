@@ -1,0 +1,50 @@
+body {
+  font-family: "Helvetica Neue", sans-serif;
+  font-weight: 300; }
+
+html, body, .root {
+  height: 100%; }
+
+.results {
+  min-height: 100%;
+  background: #e5e5e5; }
+
+.book {
+  padding: 30px 20px;
+  height: 180px; }
+  .book .cover {
+    float: left;
+    height: 115px;
+    width: 75px;
+    position: relative;
+    border-radius: 3px;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    box-shadow: 0 6px 13px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1); }
+  .book .details {
+    margin-left: 100px;
+    color: #545454; }
+    .book .details h1, .book .details h2 {
+      margin: 0.35em 0;
+      display: block; }
+    .book .details h1 {
+      margin-top: 1em;
+      font-size: 18px;
+      font-weight: 200; }
+    .book .details h2 {
+      font-size: 16px;
+      font-weight: 300; }
+    .book .details ul {
+      padding: 0; }
+    .book .details ul li {
+      list-style: none; }
+
+.panel {
+  border-radius: 8px;
+  border: 8px solid rgba(0, 0, 0, 0.1);
+  margin-top: -20px;
+  background: transparent; }
+  .panel .panel-body {
+    border-radius: 8px;
+    background: #FFF; }

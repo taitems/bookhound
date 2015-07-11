@@ -1,0 +1,37 @@
+footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	padding: 1em 0;
+	opacity: .65;
+	font-size: 15px;
+	transition: opacity .4s ease-in-out;
+
+	&:hover {
+		opacity: 1;
+	}
+	span {
+		display: inline-block;
+		margin: 0 .66em;
+		font-weight: 300;
+		color: #FFF;
+	}
+	a,
+	a:hover,
+	a:focus {
+		color: #FFF;
+		font-weight: 500;
+	}
+
+	.doSearch & {
+		position: static;
+		background: $bg-off;
+		opacity: 1;
+
+		span, a {
+			color: #333;
+		}
+	}
+}

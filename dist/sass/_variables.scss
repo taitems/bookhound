@@ -1,0 +1,18 @@
+$paper: lighten(#eae7e1,5%);
+$bg: #e5e5e5;
+$bg-off: darken($bg,5%);
+$text-color: #545454;
+$call-to-action: #6c6d5d;
+$body-bg: #38352d;
+
+$brand-mid: #333437;
+$brand-dark: #333437;
+
+$header-bg: rgba($brand-dark,.8);
+$header-text: #FFF;
+$header-text-aside: lighten($header-bg,60%);
+
+$sort-color: $brand-mid;
+
+$empty-state-heading: lighten($brand-mid,20%);
+$empty-state-sub: lighten($empty-state-heading,10%);

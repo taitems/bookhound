@@ -1,0 +1,13 @@
+.btn.btn-outline {
+	color: $brand-dark;
+	background: transparent;
+	border-color: $brand-dark;
+}
+.btn.btn-primary {
+	background: $call-to-action;
+	border: 0 none;
+
+	&[disabled] {
+		opacity: .2;
+	}
+}

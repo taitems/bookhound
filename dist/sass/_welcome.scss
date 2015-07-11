@@ -1,0 +1,107 @@
+.welcome-panel {
+	background: #FFF;
+	width: 840px;
+	height: 300px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+	box-shadow: 0 0 200px rgba(0,0,0,0.33);
+	transition: all .3s ease-in;
+
+	@media (max-width: 991px) {
+		height: auto;
+		width: auto;
+		margin: 20px;
+		position: static;
+
+		div[class^=col-] {
+			height: auto !important;
+		}
+		.user {
+			padding: 15px;
+		}
+	}
+
+	&.disappear {
+		transform: translateY(50px);
+		opacity: 0;
+	}
+
+	div[class^=col-] {
+		height: 100%;
+	}
+
+	.marketing {
+		background: lighten($bg,5%);
+		padding: .5em 1.5em;
+
+		h1, h3, p {
+			font-weight: 300;
+		}
+		h1 {
+			font-size: 2em;
+			margin-bottom: 0;
+		}
+		h3 {
+			margin-top: .5em;
+			font-size: 1.2em;
+		}
+		hr {
+			border-color: darken($bg,3%);
+		}
+		p {
+			font-size: 1.15em;
+			line-height: 1.7em;
+		}
+	}
+
+	.user.auth {
+
+		// user avatar
+		.img-circle {
+			width: 28px;
+			height: 28px;
+			margin-top: -4px;
+			margin-right: 4px;
+		}
+
+		h2 {
+			font-weight: 300;
+			font-size: 16px;
+			padding: 20px 0 15px 0;
+			margin: 0 0 15px 0;
+			border-bottom: 1px solid #eee;
+
+			strong {
+				font-weight: 400;
+			}
+			a {
+				float: right;
+			}
+		}
+
+		// sign out button
+		.fa {
+			color: #CCC;
+			text-transform: none !important;
+			cursor: pointer;
+			transition: color .1s ease-in-out;
+
+			&:hover {
+				color: #999;
+			}
+		}
+	}
+
+	.user.no-auth {
+		h2 {
+			font-weight: 300;
+			font-size: 22px;
+			margin-top: 90px;
+			margin-bottom: 20px;
+		}
+	}
+}

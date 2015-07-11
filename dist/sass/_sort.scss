@@ -1,0 +1,20 @@
+.sort-row {
+	background: $bg-off;
+	color: $sort-color;
+	padding: 8px 0;
+
+	label {
+		font-weight: 300;
+	}
+	a {
+		font-weight: 600;
+		display: inline-block;
+		margin: 0 4px;
+		color: $sort-color;
+		cursor: pointer;
+
+		&.selected {
+			text-decoration: underline;
+		}
+	}
+}
