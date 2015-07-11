@@ -33,7 +33,7 @@ process.argv.forEach(function(val, index, array) {
 });
 
 // CONFIG
-var config = require("./credentials.js");
+var config = require("./config.js");
 var credentials = {};
 if (ENV === "local") {
   credentials = require("./credentials.js");
