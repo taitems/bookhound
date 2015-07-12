@@ -2,6 +2,7 @@
 <html>
 <head>
 	<base href="/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" >
 	<link href='http://fonts.googleapis.com/css?family=Roboto:500,100,300,400' rel='stylesheet'>
 	<link rel="stylesheet" href="/bower_components/select2/select2.css">
@@ -37,7 +38,7 @@
 
 		<div ng-view></div>
 
-		<div class="welcome-panel" ng-class="{'disappear': doSearch}">
+		<div class="welcome-panel" ng-class="{'disappear': doSearch, 'signed-in': user}">
 			<div class="col-md-7 marketing">
 				<h1>Book Hound</h1>
 				<h3>Search your local libraries with your Goodreads list</h3>

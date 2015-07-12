@@ -25,6 +25,14 @@
 		}
 	}
 
+	@media (max-width: $screen-md-min) {
+		&.signed-in {
+			hr, p {
+				display: none;
+			}
+		}		
+	}
+
 	&.disappear {
 		transform: translateY(50px);
 		opacity: 0;
@@ -117,3 +125,4 @@
 		}
 	}
 }
+

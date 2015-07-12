@@ -6154,30 +6154,32 @@ body,
   .ngdialog .ratings .off {
     opacity: 0.3; }
 
-@media (max-width: 991px) {
-  .ngdialog.ngdialog-theme-plain {
-    padding: 1.5em; }
-  .ngdialog h1 {
-    font-size: 20px;
-    padding-right: 0;
-    margin-right: .25em; }
-  .ngdialog .image-container {
-    float: none;
-    width: auto;
-    height: auto; }
-    .ngdialog .image-container img {
-      margin-top: 40px; }
-    .ngdialog .image-container .ratings {
-      margin-top: 210px;
-      margin-bottom: 30px; }
-  .ngdialog .description {
-    line-height: 1.5em; }
-  .ngdialog .details-container {
-    margin-left: 0; }
-    .ngdialog .details-container .btn {
-      display: block;
-      margin-bottom: .5em;
-      margin-right: 0; } }
+@media (max-width: 768px) {
+  .ngdialog {
+    position: absolute; }
+    .ngdialog.ngdialog-theme-plain {
+      padding: 1.5em; }
+    .ngdialog h1 {
+      font-size: 20px;
+      padding-right: 0;
+      margin-bottom: .25em; }
+    .ngdialog .image-container {
+      float: none;
+      width: auto;
+      height: auto; }
+      .ngdialog .image-container img {
+        margin-top: 40px; }
+      .ngdialog .image-container .ratings {
+        margin-top: 210px;
+        margin-bottom: 30px; }
+    .ngdialog .description {
+      line-height: 1.5em; }
+    .ngdialog .details-container {
+      margin-left: 0; }
+      .ngdialog .details-container .btn {
+        display: block;
+        margin-bottom: .5em;
+        margin-right: 0; } }
 
 body {
   background: #38352d url(../img/background.jpg) center center no-repeat;
@@ -6363,6 +6365,9 @@ header {
         height: auto !important; }
       .welcome-panel .user {
         padding: 15px; } }
+  @media (max-width: 992px) {
+    .welcome-panel.signed-in hr, .welcome-panel.signed-in p {
+      display: none; } }
   .welcome-panel.disappear {
     transform: translateY(50px);
     opacity: 0;
@@ -6449,6 +6454,9 @@ footer {
     opacity: 1; }
     .doSearch footer span, .doSearch footer a {
       color: #333; }
+  @media (max-width: 992px) {
+    footer {
+      position: static; } }
 
 .empty-state {
   padding: 6em 0 3em 0; }
@@ -6483,3 +6491,8 @@ footer {
   .loading h3, .loading h4 {
     color: #FFF;
     font-weight: 300; }
+  @media (max-width: 768px) {
+    .loading h3 {
+      font-size: 20px; }
+    .loading h4 {
+      font-size: 16px; } }

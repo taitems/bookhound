@@ -34,4 +34,8 @@ footer {
 			color: #333;
 		}
 	}
+
+	@media (max-width: $screen-md-min) {
+		position: static;
+	}
 }

@@ -102,15 +102,17 @@
 
 }
 
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-sm-min) {
 	.ngdialog {
+		position: absolute;
+
 		&.ngdialog-theme-plain {
 			padding: 1.5em;
 		}
 		h1 {
 			font-size: 20px;
 			padding-right: 0;
-			margin-right: .25em;
+			margin-bottom: .25em;
 		}
 		.image-container {
 			float: none;
