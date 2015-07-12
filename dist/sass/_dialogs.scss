@@ -101,3 +101,41 @@
 	}
 
 }
+
+@media (max-width: $screen-sm-max) {
+	.ngdialog {
+		&.ngdialog-theme-plain {
+			padding: 1.5em;
+		}
+		h1 {
+			font-size: 20px;
+			padding-right: 0;
+			margin-right: .25em;
+		}
+		.image-container {
+			float: none;
+			width: auto;
+			height: auto;
+
+			img {
+				margin-top: 40px;
+			}
+			.ratings {
+				margin-top: 210px;
+				margin-bottom: 30px;
+			}
+		}
+		.description {
+			line-height: 1.5em;
+		}
+		.details-container {
+			margin-left: 0;
+
+			.btn {
+				display: block;
+				margin-bottom: .5em;
+				margin-right: 0;
+			}
+		}
+	}
+}

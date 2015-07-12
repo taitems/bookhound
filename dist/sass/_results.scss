@@ -7,9 +7,18 @@
 	height: 180px;
 	cursor: pointer;
 
-	@media (max-width: 421px) {
+	@media (max-width: $screen-xs-max) {
 		height: auto;
 		padding: 25px 20px;
+		border-bottom: 1px solid #DDD;
+
+		&:nth-child(odd) {
+			background: lighten($bg,2%);
+		}
+
+		.book {
+			height: 115px;
+		}
 	}
 
 	.book {

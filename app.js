@@ -43,11 +43,6 @@ if (ENV === "local") {
   credentials["goodreads-secret"] = process.env.GOODREADS_SECRET;
 }
 
-console.log(credentials["trove-secret"]);
-console.log(credentials["goodreads-key"]);
-console.log(credentials["goodreads-secret"]);
-
-
 var contributorFile = "contributors.json";
 
 var bookTmpl = {
@@ -133,26 +128,22 @@ passport.use(new GoodreadsStrategy({
 var app = express();
 
 // configure Express
-// app.configure(function() {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  // app.use(morgan('combined'));
-  app.use(cookieParser());
-  // app.use(bodyParser.urlencoded());
-  app.use(bodyParser.json());
-  app.use(methodOverride());
-  app.use(session({
-    secret: 'keyboard cat',
-    saveUninitialized: true,
-    resave: true
-  }));
-  // Initialize Passport!  Also use passport.session() middleware, to support
-  // persistent login sessions (recommended).
-  app.use(passport.initialize());
-  app.use(passport.session());
-  // app.use(app.router);
-  app.use(express.static(__dirname + '/dist'));
-// });
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(methodOverride());
+app.use(session({
+  secret: 'keyboard cat',
+  saveUninitialized: true,
+  resave: true
+}));
+
+// Initialize Passport!  Also use passport.session() middleware, to support
+// persistent login sessions (recommended).
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(__dirname + '/dist'));
 
 
 app.get('/', function(req, res){
