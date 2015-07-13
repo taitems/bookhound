@@ -1,15 +1,17 @@
 {
   "name": "test",
   "dependencies": {
-    "angular": ">=1.2.0",
-    "angular-ui-select2": "x.x.x",
-    "select2": "~3.4",
+    "angular": ">=1.4.0",
+    "angular-ui-select": "x.x.x",
     "jquery": ">=1.6.4",
     "angular-spinner": "x.x.x",
     "ngDialog": "x.x.x",
     "ngSanitize": "x.x.x",
-    "angular-sanitize": "~1.3.12",
-    "angular-route": "~1.3.14",
+    "angular-sanitize": ">=1.4.x",
+    "angular-route": ">=1.4.x",
     "bootstrap-sass": "~3.3.5"
+  },
+  "resolutions": {
+    "angular": ">=1.4.0"
   }
 }

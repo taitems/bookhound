@@ -1,18 +1,19 @@
-var myApp = angular.module('myApp',['ui.select2','angularSpinner', 'ngDialog', 'ngSanitize', 'ngRoute']);
+var myApp = angular.module('myApp',['ui.select','angularSpinner', 'ngDialog', 'ngSanitize', 'ngRoute']);
 
 myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 'ngDialog', '$sce', '$location', '$routeParams', function($rootScope,$scope,$http,usSpinnerService,ngDialog,$sce,$location,$routeParams) {
 
     $scope.user = window.user;
     $scope.books = null;
     $scope.contributors = [];
-    $scope.libraries = [];
     $scope.selectedShelf = 'to-read';
     $scope.shelves = [];
     $scope.selectedBook = null;
     $scope.doSearch = false;
     $scope.filter = '';
     $scope.isFetching = false;
+    $scope.libraries = {};
     $scope.libraryFriendly = false;
+    $scope.selectedLibrary;
     $scope.loaded = {
         routeParams: false,
         contributors: false
@@ -41,7 +42,7 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
             }
             if ($routeParams.library) {
                 $scope.loaded.routeParams = true;
-                $scope.libraries = $routeParams.library;
+                $scope.selectedLibrary = $routeParams.library;
                 $scope.attemptFetch();
             }
         }
@@ -54,7 +55,8 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
     };
 
     $scope.reset = function() {
-        $scope.libraries = null;
+        $scope.libraries = {};
+        $scope.selectedLibrary = null;
         $scope.doSearch = null;
         $scope.filter = '';
         $location.path("/");
@@ -67,18 +69,18 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
         $scope.serverError = false;
         $scope.showSpinner();
 
-        // GET LIBRARY AS A FRIENDLY NAME, NOT 'nuc' ID
-        findLibrary($scope.libraries);
+        $scope.libraryFriendly = $scope.libraries.selected.name;
+        $scope.selectedLibrary = $scope.libraries.selected.id;
 
         // SET HASH
-        $location.path("/search/" + $scope.libraries);
+        $location.path("/search/" + $scope.selectedLibrary);
 
         Intercom('trackEvent',"Performed Search", {
             "Library": $scope.libraries,
             "Shelf": $scope.selectedShelf
         });
 
-        var url = "/fetch/results/" + $scope.libraries + "/" + $scope.selectedShelf;
+        var url = "/fetch/results/" + $scope.selectedLibrary + "/" + $scope.selectedShelf;
         
         $http.get(url)
             .success(function(data) {
@@ -138,7 +140,7 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
             "Title": book.title,
             "Author": book.author,
             "Rating": book.rating,
-            "Library": $scope.libraries,
+            "Library": $scope.selectedLibrary,
             "Shelf": $scope.selectedShelf
         });
         
@@ -166,15 +168,6 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
 
     $scope.trustedDescription = function() {
         return $sce.trustAsHtml($scope.selectedBook.description);
-    };
-
-    var findLibrary = function(nuc) {
-        for (var i = 0, len = $scope.contributors.length; i < len; i++) {
-            if ($scope.contributors[i].id === nuc) {
-                $scope.libraryFriendly = $scope.contributors[i].name;
-                break;
-            }
-        }
     };
 
     $rootScope.$on('ngDialog.closed', function (e, $dialog) {

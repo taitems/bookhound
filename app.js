@@ -147,11 +147,11 @@ app.use(express.static(__dirname + '/dist'));
 
 
 app.get('/', function(req, res){
-  res.render('final', { user: req.user });
+  res.render('master', { user: req.user });
 });
 
 app.get('/search/:id', function(req, res){
-  res.render('final', { user: req.user });
+  res.render('master', { user: req.user });
 });
 
 
@@ -187,7 +187,7 @@ app.get('/fetch/shelves', function(req, res){
 
 app.get("/fetch/results/:nucs/:shelf", function(req, res) {
   if (!req.user) {
-    res.redirect("/login");
+    res.redirect("/");
   }
   if (!req.params.nucs || !req.params.shelf) {
     res.send(401);
@@ -214,14 +214,6 @@ app.get("/fetch/results/:nucs/:shelf", function(req, res) {
   });
 });
 
-app.get('/account', ensureAuthenticated, function(req, res){
-  res.render('account', { user: req.user });
-});
-
-app.get('/login', function(req, res){
-  res.render('login', { user: req.user });
-});
-
 // GET /auth/goodreads
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  The first step in Goodreads authentication will involve redirecting
@@ -240,7 +232,7 @@ app.get('/auth/goodreads',
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 app.get('/auth/goodreads/callback', 
-  passport.authenticate('goodreads', { failureRedirect: '/login' }),
+  passport.authenticate('goodreads', { failureRedirect: '/' }),
   function(req, res) {
 
     request.get({
@@ -388,7 +380,7 @@ var writeToCache = function(contributors) {
 //   login page.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
+  res.redirect('/');
 }
 
 var unwrap = function(str) {

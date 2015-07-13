@@ -1,0 +1,12 @@
+.ui-select-match {
+	.ui-select-match-text {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding-right: 10px;
+	}
+}
+
+.ui-select-choices-row div {
+	white-space: normal;
+}

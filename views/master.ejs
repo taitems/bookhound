@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+	<base href="/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" >
+	<link href='http://fonts.googleapis.com/css?family=Roboto:500,100,300,400' rel='stylesheet'>
+	<link rel="stylesheet" href="/bower_components/angular-ui-select/dist/select.css">
+	<link rel="stylesheet" href="/bower_components/ngDialog/css/ngDialog.css">
+	<link rel="stylesheet" href="/bower_components/ngDialog/css/ngDialog-theme-plain.css">
+	<link rel="stylesheet" href="/css/manifest.css" />
+	<script>
+		<% if (user) { %>
+			var user = {
+				displayName: "<%= user.displayName %>",
+				id: "<%= user.id %>",
+				image_url: "<%= user.image_url %>"
+			};
+			window.intercomSettings = {
+				name: "<%= user.displayName %>",
+				user_id: "<%= user.id %>",
+    			created_at: 1234567890,
+				app_id: "d8lbjft4",
+				avatar: {
+					type: "avatar",
+					image_url: "<%= user.image_url %>"
+				}
+			};
+		<% } else { %>
+			var user = false;
+			window.intercomSettings = {};
+		<% } %>	
+	</script>
+</head>
+<body ng-app="myApp">
+
+	<div ng-controller="MainCtrl" class="root" ng-class="{'doSearch': doSearch}">
+
+		<div ng-view></div>
+
+		<div class="welcome-panel" ng-class="{'disappear': doSearch, 'signed-in': user}">
+			<div class="col-md-7 marketing">
+				<h1>Book Hound</h1>
+				<h3>Search your local libraries with your Goodreads list</h3>
+				<hr>
+				<p>
+					Book Hound uses your 'To Read' Goodreads shelf and searches your local Australian library for matches. Spend more time buried in a book, and less time rifling through the shelves.
+				</p>
+			</div>
+			<div ng-cloak ng-show="!user" class="col-md-5 text-center user no-auth">
+				<h2>Start searching</h2>
+				<button class="btn btn-outline btn-lg" ng-click="login()">Sign in with Goodreads</button>
+			</div>
+			<div ng-cloak ng-show="user" class="col-md-5 user auth">
+				<h2>
+					<img ng-src="{{user.image_url}}" class="img-circle">
+					Hello, <strong>{{user.displayName}}</strong>
+					<a class="fa fa-close" ng-click="logout()"></a>
+				</h2>
+				<form name="searchForm">
+					<div class="form-group">
+						<label>Your Library</label>
+						<ui-select ng-model="libraries.selected" ng-disabled="!contributors.length" theme="bootstrap" ng-required="true">
+							<ui-select-match required placeholder="Search libraries">{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="library in contributors | filter:$select.search">
+								<div ng-bind-html="library.name"></div>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<div class="form-group">
+						<label>Goodreads Shelf</label>
+						<select ng-model="selectedShelf" style="width:100%;" disabled="disabled" class="form-control">
+							<option value="{{selectedShelf}}">{{selectedShelf}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<button class="btn btn-primary btn-block" ng-click="fetch()" ng-disabled="!searchForm.$valid">Fetch</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<header ng-cloak ng-show="user && doSearch">
+			<div class="container">
+				<h3>Showing books available at</h3>
+				<h1>{{libraryFriendly}}</h1>
+				<span ng-click="reset()">
+					<span class="fa fa-angle-left"></span>
+					Back to Search
+				</span>
+			</div>
+		</header>
+
+		<section ng-cloak ng-show="user && doSearch" class="results">
+
+			<div class="sort-row" ng-show="books.length > 0 && !isFetching && !serverError">
+				<div class="container">
+					<label>Sort by</label>
+					<a ng-class="{selected:filter===''}" ng-click="filter=''">Date Added</a>
+					<a ng-class="{selected:filter==='-rating'}" ng-click="filter='-rating'">Highest Rating</a>
+					<a ng-class="{selected:filter==='-ratings_count'}" ng-click="filter='-ratings_count'">Number of Ratings</a>
+				</div>
+			</div>
+
+			<div class="loading" ng-show="isFetching">
+				<div class="vert-center">
+					<span us-spinner="{color:'white'}" spinner-key="spinner-1"></span>
+					<h3>Searching Goodreads and Trove</h3>
+					<h4>Sometimes this can take a while...</h4>
+				</div>
+			</div>
+
+
+			<div class="container">
+
+				<!-- 500 error -->
+				<div class="empty-state" ng-show="serverError === 500 && !isFetching">
+					<h1>Uhoh, something went wrong</h1>
+					<h4>We've been notified of the error. The person who broke it will be taken out at dawn and shot.</h4>
+				</div>
+
+				<!-- 429 error -->
+				<div class="empty-state" ng-show="serverError === 429 && !isFetching">
+					<h1>Rate limit reached</h1>
+					<h4>Well, this is awkward. The Trove API limits how many times we can slam their server. Try again in a few moments.</h4>
+				</div>
+
+				<!-- no results found -->
+				<div class="empty-state" ng-show="books.length === 0 && !isFetching">
+					<h1>Nothing found</h1>
+					<h4>Sorry, we couldn't find any books for you. Thanks Obama...</h4>
+				</div>
+
+				<!-- 'books' contains results -->
+				<div ng-show="books.length > 0 && !isFetching && !serverError" class="row">
+					<div ng-repeat="book in books | orderBy:filter" ng-class='{open: selectedBook == book}' ng-click="openItem(book)" ng-hide="!book.holdings.length" class="item col-xs-12 col-sm-6 col-lg-4">
+						<div class="book">
+							<div class="cover" ng-style="{'background-image':'url(' + book.image + ')'}"></div>
+							<div class="backing"></div>
+							<div class="pages"></div>
+						</div>
+						<div class="details">
+							<h1>{{book.title}}</h1>
+							<h2>{{book.author}}</h2>
+							<p>{{book.rating}} based off {{book.ratings_count | number}} reviews</p>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</section>
+
+		<footer>
+			<span>
+				Built by <a href="http://twitter.com/taitems" target="_blank">@taitems</a>
+			</span>
+		</footer>
+
+	</div>
+
+	<script>(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/d8lbjft4';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()</script>
+	<script src="/bower_components/angular/angular.js"></script>
+	<script src="/bower_components/angular-ui-select/dist/select.min.js"></script>
+	<script src="/bower_components/spin.js/spin.js"></script>
+	<script src="/bower_components/angular-spinner/angular-spinner.js"></script>
+	<script src="/bower_components/ngDialog/js/ngDialog.js"></script>
+	<script src="/bower_components/angular-sanitize/angular-sanitize.js"></script>
+	<script src="/bower_components/angular-route/angular-route.js"></script>
+	<script src="/script.js"></script>
+
+</body>
+</html>
