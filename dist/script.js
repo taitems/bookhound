@@ -13,7 +13,7 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
     $scope.isFetching = false;
     $scope.libraries = {};
     $scope.libraryFriendly = false;
-    $scope.selectedLibrary;
+    $scope.selectedLibrary = false;
     $scope.loaded = {
         routeParams: false,
         contributors: false

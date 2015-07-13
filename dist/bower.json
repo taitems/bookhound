@@ -3,7 +3,6 @@
   "dependencies": {
     "angular": ">=1.4.0",
     "angular-ui-select": "x.x.x",
-    "jquery": ">=1.6.4",
     "angular-spinner": "x.x.x",
     "ngDialog": "x.x.x",
     "ngSanitize": "x.x.x",
