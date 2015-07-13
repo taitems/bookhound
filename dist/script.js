@@ -69,8 +69,12 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
         $scope.serverError = false;
         $scope.showSpinner();
 
-        $scope.libraryFriendly = $scope.libraries.selected.name;
-        $scope.selectedLibrary = $scope.libraries.selected.id;
+        if ($scope.libraries.selected) {
+            $scope.libraryFriendly = $scope.libraries.selected.name;
+            $scope.selectedLibrary = $scope.libraries.selected.id;
+        } else {
+            $scope.libraryFriendly = getLibraryName($scope.selectedLibrary);
+        }
 
         // SET HASH
         $location.path("/search/" + $scope.selectedLibrary);
@@ -168,6 +172,14 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
 
     $scope.trustedDescription = function() {
         return $sce.trustAsHtml($scope.selectedBook.description);
+    };
+
+    var getLibraryName = function(nuc) {
+        for (var i = 0, len = $scope.contributors.length; i < len; i++) {
+            if ($scope.contributors[i].id === nuc) {
+                return $scope.contributors[i].name;
+            }
+        }
     };
 
     $rootScope.$on('ngDialog.closed', function (e, $dialog) {

@@ -207,7 +207,7 @@ app.get("/fetch/results/:nucs/:shelf", function(req, res) {
       "key": credentials["goodreads-key"],
       "shelf": req.params.shelf,
       "v": 2,
-      "per_page": 200
+      "per_page": 99 // work around rate limit of 100
     }
   }, function(e,r,body) {
     handler(req,res,body,nucs);
