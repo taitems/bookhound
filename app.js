@@ -410,6 +410,10 @@ var handler = function(req,res,body,nucs) {
         theObject.push(newBook);
       }
     }
+    if (theObject.length === 0) {
+      res.send("no books in shelf");
+      return;
+    }
     hitTrove(theObject,req,res,nucs);
   });
 };
@@ -455,40 +459,51 @@ var cleanData = function(item,data,nucs) {
     }
 };
 
+var buildIsbnSearchSting = function(arr) {
+  if (arr.length === 1) {
+    return arr[0].isbn;
+  } else {
+    var isbnList = "";
+    for (var i = 0; i < arr.length; i++) {
+      if (i === 0) {
+        isbnList += arr[i].isbn;
+      } else {
+        isbnList += " OR " + arr[i].isbn;
+      }
+    }
+    return "(" + isbnList + ")";
+  }
+};
+
 var hitTrove = function(theObject,req,res,nucs) {
 
-  async.each(theObject,function(item,cb) {
+  var isbnsToSearch = buildIsbnSearchSting(theObject);
 
-      var url = "http://api.trove.nla.gov.au/result?key={key}&zone=book&q=isbn:{isbn} AND nuc:{nuc}&include=holdings&encoding=json";
-      url = url.replace("{isbn}",item.isbn);
-      url = url.replace("{nuc}",nucs.join(","));
-      url = url.replace("{key}",credentials["trove-secret"]);
+  var url = "http://api.trove.nla.gov.au/result?key={key}&zone=book&q=isbn:{isbn} AND nuc:{nuc}&include=holdings&encoding=json";
+  url = url.replace("{isbn}",isbnsToSearch);
+  url = url.replace("{nuc}",nucs.join(","));
+  url = url.replace("{key}",credentials["trove-secret"]);
 
-      request.get({
-        url: url
-      }, function(e,r,data) {
-        var status = cleanData(item,data,nucs);
-        if (status === "error") {
-          cb("item error");
-        } else if (status && status.indexOf("rate limit") >= 0) {
-          cb("rate limit hit");
-        } else {
-          cb();
-        }
-      });
 
-  }, function(err) {
-      if (err) {
-        if (err === "rate limit hit") {
-          res.sendStatus(429);
-        } else {
-          res.sendStatus(500);
-        }
-      } else {
-        removeEmptyHoldings(theObject);
-        res.send(theObject);
-      }
+  // TODO: item doesn't exist any more
+  // instead of getting this for each request, we need to clean up
+  // the whole returned object, not just the single item
+  request.get({
+    url: url
+  }, function(e,r,data) {
+    var status = cleanData(item,data,nucs);
+    if (status === "error") {
+      cb("item error");
+      res.sendStatus(500);
+    } else if (status && status.indexOf("rate limit") >= 0) {
+      cb("rate limit hit");
+      res.sendStatus(429);
+    } else {
+      removeEmptyHoldings(theObject);
+      res.send(theObject);
+    }
   });
+
 };
 
 
