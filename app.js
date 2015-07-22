@@ -33,17 +33,17 @@ process.argv.forEach(function(val, index, array) {
 });
 
 // CONFIG
-var config = require("./config.js");
+var config = require("./config/config.js");
 var credentials = {};
 if (ENV === "local") {
-  credentials = require("./credentials.js");
+  credentials = require("./config/credentials.js");
 } else {
   credentials["trove-secret"] = process.env.TROVE_SECRET;
   credentials["goodreads-key"] = process.env.GOODREADS_KEY;
   credentials["goodreads-secret"] = process.env.GOODREADS_SECRET;
 }
 
-var contributorFile = "contributors.json";
+var contributorFile = "lib/contributors.json";
 
 var bookTmpl = {
   isbn: null,
@@ -52,7 +52,7 @@ var bookTmpl = {
   title: null,
   image: null,
   rating: null,
-  ratings_count: null,
+  ratingsCount: null,
   description: null,
   published: null,
   url: null,
@@ -112,7 +112,7 @@ passport.use(new GoodreadsStrategy({
   function(token, tokenSecret, profile, done) {
     // asynchronous verification, for effect...
     process.nextTick(function() {
-      
+
       // To keep the example simple, the user's Goodreads profile is returned to
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Goodreads account with a user record in your database,
@@ -200,7 +200,7 @@ app.get("/fetch/results/:nucs/:shelf", function(req, res) {
   } else {
     nucs = [nucsAsString];
   }
-  
+
   request.get({
     url: "https://www.goodreads.com/review/list/" + req.user.id + ".xml",
     qs: {
@@ -231,7 +231,7 @@ app.get('/auth/goodreads',
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get('/auth/goodreads/callback', 
+app.get('/auth/goodreads/callback',
   passport.authenticate('goodreads', { failureRedirect: '/' }),
   function(req, res) {
 
@@ -317,7 +317,7 @@ var checkContributorCache = function(callback,results) {
       if (cachedContributors.updated) {
 
         // cache period vs. yesterday
-        var updated = moment(cachedContributors.updated).valueOf();  
+        var updated = moment(cachedContributors.updated).valueOf();
         var yesterday = moment().subtract(1,'day').valueOf();
 
         // if within cache period
@@ -419,7 +419,7 @@ var handler = function(req,res,body,nucs) {
 };
 
 
-// TROVE RETURNS ALL THE HOLDINGS FOR THE BOOK, SO WE MUST LOOP 
+// TROVE RETURNS ALL THE HOLDINGS FOR THE BOOK, SO WE MUST LOOP
 // THROUGH ALL THE HOLDINGS AND ENSURE THEY MATCH THE LIBRARY
 var matchHoldingsToLibrary = function(item,nucs,holdings) {
   for (var i = 0, len = holdings.length; i < len; i++) {
@@ -443,11 +443,11 @@ var cleanData = function(item,data,nucs) {
 
     var clean = JSON.parse(data);
 
-    if (clean.response && 
+    if (clean.response &&
         clean.response.zone &&
         clean.response.zone[0].records &&
         clean.response.zone[0].records.work) {
-      
+
       var response = clean.response.zone[0].records.work[0];
 
       item.troveUrl = response.troveUrl || "";

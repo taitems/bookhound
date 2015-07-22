@@ -1,3 +1,8 @@
+/*jshint newcap:false*/
+/*global Intercom*/
+
+'use strict';
+
 var myApp = angular.module('myApp',['ui.select','angularSpinner', 'ngDialog', 'ngSanitize', 'ngRoute']);
 
 myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 'ngDialog', '$sce', '$location', '$routeParams', function($rootScope,$scope,$http,usSpinnerService,ngDialog,$sce,$location,$routeParams) {
@@ -29,7 +34,7 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
                 $scope.contributors = data.response.contributor;
                 $scope.attemptFetch();
             }
-        });        
+        });
     }
 
 
@@ -37,7 +42,7 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
         if ($scope.firstLoad) {
             $scope.firstLoad = false;
             if (!$scope.user) {
-                $location.path("/");
+                $location.path('/');
                 return;
             }
             if ($routeParams.library) {
@@ -59,7 +64,7 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
         $scope.selectedLibrary = null;
         $scope.doSearch = null;
         $scope.filter = '';
-        $location.path("/");
+        $location.path('/');
     };
 
     $scope.fetch = function() {
@@ -77,15 +82,15 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
         }
 
         // SET HASH
-        $location.path("/search/" + $scope.selectedLibrary);
+        $location.path('/search/' + $scope.selectedLibrary);
 
-        Intercom('trackEvent',"Performed Search", {
-            "Library": $scope.libraries,
-            "Shelf": $scope.selectedShelf
+        Intercom('trackEvent','Performed Search', {
+            'Library': $scope.libraries,
+            'Shelf': $scope.selectedShelf
         });
 
-        var url = "/fetch/results/" + $scope.selectedLibrary + "/" + $scope.selectedShelf;
-        
+        var url = '/fetch/results/' + $scope.selectedLibrary + '/' + $scope.selectedShelf;
+
         $http.get(url)
             .success(function(data) {
 
@@ -95,15 +100,15 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
 
                 // ratings need to be converted from strings to integers
                 angular.forEach(predata, function (book) {
-                    book.ratings_count = parseFloat(book.ratings_count);
+                    book.ratingsCount = parseFloat(book.ratingsCount);
                 });
 
                 $scope.books = predata;
-                
-            })
-            .error(function(data, status, headers, config) {
 
-                Intercom('trackEvent',"Fetch Error - " + status);
+            })
+            .error(function(data, status) {
+
+                Intercom('trackEvent','Fetch Error - ' + status);
 
                 $scope.stopSpinner();
                 $scope.serverError = status;
@@ -122,13 +127,13 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
     };
 
     $scope.login = function() {
-        Intercom('trackEvent',"Login");
-        window.location.href = "/auth/goodreads";
+        Intercom('trackEvent','Login');
+        window.location.href = '/auth/goodreads';
     };
 
     $scope.logout = function() {
-        Intercom('trackEvent',"Logout");
-        window.location.href = "/logout";
+        Intercom('trackEvent','Logout');
+        window.location.href = '/logout';
     };
 
     $scope.openItem = function(book) {
@@ -139,28 +144,28 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
 
         $scope.selectedBook = book;
 
-        Intercom('trackEvent',"View Book Details", {
-            "ISBN": book.isbn,
-            "Title": book.title,
-            "Author": book.author,
-            "Rating": book.rating,
-            "Library": $scope.selectedLibrary,
-            "Shelf": $scope.selectedShelf
+        Intercom('trackEvent','View Book Details', {
+            'ISBN': book.isbn,
+            'Title': book.title,
+            'Author': book.author,
+            'Rating': book.rating,
+            'Library': $scope.selectedLibrary,
+            'Shelf': $scope.selectedShelf
         });
-        
+
         setTimeout(function() {
             ngDialog.open({
-                template: "dialog/dialog.html",
+                template: 'dialog/dialog.html',
                 scope: $scope,
                 className: 'ngdialog-theme-plain'
             });
         },650);
-        
+
     };
 
     $scope.stars = function(num) {
         var roundNum = Math.round(num);
-        var output = "";
+        var output = '';
         for (var i = 0; i < roundNum; i++) {
             output += '<i class="fa fa-star"></i>';
         }
@@ -182,12 +187,12 @@ myApp.controller('MainCtrl', ['$rootScope','$scope','$http','usSpinnerService', 
         }
     };
 
-    $rootScope.$on('ngDialog.closed', function (e, $dialog) {
+    $rootScope.$on('ngDialog.closed', function () {
         $scope.selectedBook = null;
         $scope.$digest();
     });
 
-    Intercom('trackEvent',"Page Loaded");
+    Intercom('trackEvent','Page Loaded');
 
 }]);
 
@@ -198,7 +203,7 @@ myApp.config(function($routeProvider, $locationProvider){
         .when('/', {
             controller: 'MainCtrl'
         })
-        .when("/search/:library", {
+        .when('/search/:library', {
             controller: 'MainCtrl'
         })
         .otherwise({redirectTo:'/'});
