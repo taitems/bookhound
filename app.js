@@ -210,7 +210,7 @@ app.get("/fetch/results/:nucs/:shelf", function(req, res) {
       "per_page": 99 // work around rate limit of 100
     }
   }, function(e,r,body) {
-    handler(req,res,body,nucs);
+    parseShelfResult(req,res,body,nucs);
   });
 });
 
@@ -383,20 +383,14 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/');
 }
 
-var unwrap = function(str) {
-  var newStr = str.replace(/<isbn>/ig,"");
-  newStr = newStr.replace(/<\/isbn>/ig,",");
-  newStr = newStr.replace(/,,/ig,",");
-  return newStr.split(",");
-};
-
-var handler = function(req,res,body,nucs) {
-  var theObject = [];
+var parseShelfResult = function(req,res,body,nucs) {
+  var usersBooks = [];
   parseString(body, function(err, result) {
     var reviews = result.GoodreadsResponse.reviews["0"].review;
     for (var prop in reviews) {
       var book = reviews[prop].book["0"];
-      if (book) {
+      // ignore books that don't have an ISBN
+      if (book && typeof book.isbn[0] === "string") {
         var newBook = JSON.parse(JSON.stringify(bookTmpl));
         newBook.title = book.title.toString();
         newBook.isbn = book.isbn.toString();
@@ -407,14 +401,14 @@ var handler = function(req,res,body,nucs) {
         newBook.description = book.description.toString();
         newBook.published = book.published.toString();
         newBook.url = book.link;
-        theObject.push(newBook);
+        usersBooks.push(newBook);
       }
     }
-    if (theObject.length === 0) {
+    if (usersBooks.length === 0) {
       res.send("no books in shelf");
       return;
     }
-    hitTrove(theObject,req,res,nucs);
+    hitTrove(usersBooks,req,res,nucs);
   });
 };
 
@@ -431,30 +425,33 @@ var matchHoldingsToLibrary = function(item,nucs,holdings) {
   }
 };
 
-var cleanData = function(item,data,nucs) {
+var parseTroveResponse = function(item,data,nucs) {
 
+    // Handle any errors
     if (!data || data.charAt(0) === "<") {
       if (data && data.indexOf("requests per minute")) {
-        return "error - rate limit";
+        return 429;
       } else {
-        return "error";
+        return 500;
       }
     }
 
-    var clean = JSON.parse(data);
+    var cleanedResponse = JSON.parse(data);
 
-    if (clean.response &&
-        clean.response.zone &&
-        clean.response.zone[0].records &&
-        clean.response.zone[0].records.work) {
+    if (cleanedResponse.response &&
+        cleanedResponse.response.zone &&
+        cleanedResponse.response.zone[0].records &&
+        cleanedResponse.response.zone[0].records.work) {
 
-      var response = clean.response.zone[0].records.work[0];
+      var response = cleanedResponse.response.zone[0].records.work[0];
 
       item.troveUrl = response.troveUrl || "";
 
       if (response.holding) {
         matchHoldingsToLibrary(item,nucs,response.holding);
       }
+
+      return 200;
 
     }
 };
@@ -475,44 +472,64 @@ var buildIsbnSearchSting = function(arr) {
   }
 };
 
-var hitTrove = function(theObject,req,res,nucs) {
+var hitTrove = function(usersBooks,req,res,nucs) {
 
-  var isbnsToSearch = buildIsbnSearchSting(theObject);
+  async.each(usersBooks,function(item,cb) {
 
-  var url = "http://api.trove.nla.gov.au/result?key={key}&zone=book&q=isbn:{isbn} AND nuc:{nuc}&include=holdings&encoding=json";
-  url = url.replace("{isbn}",isbnsToSearch);
-  url = url.replace("{nuc}",nucs.join(","));
-  url = url.replace("{key}",credentials["trove-secret"]);
+      var url = "http://api.trove.nla.gov.au/result?key={key}&zone=book&q=isbn:{isbn} AND nuc:{nuc}&include=holdings&encoding=json";
+      url = url.replace("{isbn}",item.isbn);
+      url = url.replace("{nuc}",nucs.join(","));
+      url = url.replace("{key}",credentials["trove-secret"]);
 
+      request.get({
+        url: url
+      }, function(e,r,data) {
+        var troveResponse = parseTroveResponse(item,data,nucs);
+        if (troveResponse === 200) {
+          cb();
+        } else {
+          cb(troveResponse);
+        }
+      });
 
-  // TODO: item doesn't exist any more
-  // instead of getting this for each request, we need to clean up
-  // the whole returned object, not just the single item
-  request.get({
-    url: url
-  }, function(e,r,data) {
-    var status = cleanData(item,data,nucs);
-    if (status === "error") {
-      cb("item error");
-      res.sendStatus(500);
-    } else if (status && status.indexOf("rate limit") >= 0) {
-      cb("rate limit hit");
-      res.sendStatus(429);
-    } else {
-      removeEmptyHoldings(theObject);
-      res.send(theObject);
-    }
+  }, function(err) {
+      if (err) {
+        res.sendStatus(err);
+      } else {
+        removeEmptyHoldings(usersBooks);
+        res.send(usersBooks);
+      }
   });
+
+  // var isbnsToSearch = buildIsbnSearchSting(usersBooks);
+
+  // var url = "http://api.trove.nla.gov.au/result?key={key}&zone=book&q=isbn:{isbn} AND nuc:{nuc}&include=holdings&encoding=json";
+  // url = url.replace("{isbn}",isbnsToSearch);
+  // url = url.replace("{nuc}",nucs.join(","));
+  // url = url.replace("{key}",credentials["trove-secret"]);
+
+  // TODO: Need to re-add batching
+  // request.get({
+  //   url: url
+  // }, function(e,r,data) {
+  //   var troveResponse = parseTroveResponse(usersBooks,data,nucs);
+  //   if (troveResponse.status === 200) {
+  //     removeEmptyHoldings(usersBooks);
+  //     res.send(usersBooks);
+  //   } else {
+  //     res.sendStatus(troveResponse.status);
+  //   }
+  // });
 
 };
 
 
 // LOOP THROUGH THE RESULTS AND REMOVE ANY BOOKS WITH
 // NO LISTINGS, LOOPING BACKWARDS AS TO AVOID ARRAY ISSUES
-var removeEmptyHoldings = function(theObject) {
-  for (var i = theObject.length - 1; i >= 0; i--) {
-    if (theObject[i].holdings.length === 0) {
-      theObject.splice(i,1);
+var removeEmptyHoldings = function(usersBooks) {
+  for (var i = usersBooks.length - 1; i >= 0; i--) {
+    if (usersBooks[i].holdings.length === 0) {
+      usersBooks.splice(i,1);
     }
   };
 }
